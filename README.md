@@ -6,6 +6,15 @@ Read [`project-guide.md`](project-guide.md) for the full project specification.
 
 ---
 
+## 1. Team Information
+
+| Name | SRN |
+|------|-----|
+| Nirupama Jayaraman | PES2UG24CS324 |
+| Niya Ann Joseph | PES2UG24CS329 |
+
+---
+
 ## Getting Started
 
 ### 1. Fork the Repository
