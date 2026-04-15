@@ -78,8 +78,10 @@ cp boilerplate/io_pulse rootfs-beta/
 ```bash
 cd boilerplate
 sudo insmod monitor.ko
-ls -l /dev/container_monitor   # verify device created
+ls -l /dev/container_monitor
 ```
+Verify that device is created. 
+
 
 ### Start Supervisor (Terminal 1)
 

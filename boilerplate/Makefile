@@ -1,5 +1,5 @@
 obj-m += monitor.o
-
+ccflags-y += -Wno-error=unused-function
 KDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
 # If you want host-built workload binaries to run directly inside an Alpine
