@@ -320,7 +320,7 @@ Both containers ran `/cpu_hog` for a fixed 10-second wall-clock duration simulta
 | Container | Nice Value | Final Accumulator | Relative CPU Share |
 |-----------|-----------|-------------------|-------------------|
 | `low` | 0 | 14,608,044,233,808,682,720 | ~53% |
-| `high` | 15 | 12,690,455,994,537,658,380 | ~47%~ |
+| `high` | 15 | 12,690,455,994,537,658,380 | ~47% |
 
 **Ratio:** `low` completed approximately **1.15× more work** than `high` in the same time period.
 
