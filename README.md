@@ -334,4 +334,16 @@ Both containers ran `/cpu_hog` for a fixed 10-second wall-clock duration simulta
 
 > Note: The early accumulator values show some irregularities due to initial scheduling effects and logging timing. The first few seconds do not perfectly reflect steady-state CPU share, as the scheduler is still distributing time slices and processes may not start executing at exactly the same moment. However, by the end of execution, the container with the lower nice value consistently performs more work, demonstrating CFS priority weighting.
 
+ 
+### Analysis
+
+The Linux CFS scheduler uses a red-black tree ordered by `vruntime` (virtual runtime). The `vruntime` of a task advances at a rate inversely proportional to its weight. A `nice=15` task's weight (~88) is about 11.6× lower than a `nice=0` task's weight (1024), meaning its `vruntime` advances much faster per real nanosecond of CPU time. CFS always runs the task with the lowest `vruntime` next, so the `nice=0` task is consistently picked ahead of the `nice=15` task.
+
+The observed 1.87:1 ratio is lower than the theoretical 11.6:1 because:
+1. The VM has multiple CPU cores available, so both tasks can run simultaneously on separate cores for parts of the experiment.
+2. CFS enforces a minimum granularity (`sched_min_granularity_ns`) that prevents the high-priority task from completely starving the low-priority task.
+3. The workload duration (10s) is short enough that initial scheduling artifacts affect the average.
+
+This demonstrates CFS's core design goal: **proportional fairness with no starvation**, as opposed to strict priority scheduling where a low-priority task might receive zero CPU time.
+
 ---
