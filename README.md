@@ -262,19 +262,19 @@ A long-running supervisor process is central to managing container lifecycles. I
 
 To differentiate between different termination scenarios, the supervisor sets a `stop_requested` flag before sending termination signals. When a container is reaped, this flag is checked to determine whether the exit was normal, user-initiated, or caused by a forced termination such as a kernel-enforced kill. This mechanism enables accurate tracking and reporting of container states.
 
-### 3. IPC, Threads, and Synchronization
+### 4.3 IPC, Threads, and Synchronization
 
 The runtime uses two separate inter-process communication mechanisms. The first is a logging pipeline where each container’s standard output and error streams are redirected through pipes to producer threads. These producers insert log data into a bounded circular buffer, which is protected by a mutex and coordinated using condition variables to handle full and empty states. Consumer threads then read from the buffer and write the logs to files. This design ensures that log data is not lost while also preventing uncontrolled memory growth.
 
 The second IPC mechanism is a control channel implemented using a UNIX domain socket. This allows CLI commands to be sent to the supervisor, which processes requests and sends back responses. For shared metadata, a single mutex is used to protect the container list, which is sufficient due to the low frequency and short duration of metadata operations. Similarly, the kernel module uses a mutex to guard its process list, as its timer-based checks occur only once per second, making the overhead minimal compared to a spinlock.
 
-### 4. Memory Management and Enforcement
+### 4.4 Memory Management and Enforcement
 
 Memory usage is tracked using Resident Set Size (RSS), which represents the portion of a process’s memory currently held in physical RAM. RSS does not include swapped-out pages or non-resident memory-mapped data. The system enforces both soft and hard memory limits. The soft limit serves as an early warning mechanism, generating a log entry the first time it is exceeded, while the hard limit enforces strict control by terminating the process if it surpasses the threshold.
 
 This enforcement is implemented in kernel space because only the kernel has direct access to accurate memory accounting through structures such as `mm_struct`. User-space approaches would be unreliable due to race conditions and the inability to intercept memory allocations or page faults in real time.
 
-### 5. Scheduling Behavior
+### 4.5 Scheduling Behavior
 
 Scheduling behavior was evaluated under different workloads to understand how the Linux Completely Fair Scheduler (CFS) allocates CPU time. When two CPU-bound processes were run with different priorities, the higher-priority process (with a lower `nice` value) received significantly more CPU time and completed much faster. This demonstrates how CFS uses weighted virtual runtime (`vruntime`) to favor higher-priority tasks.
 
